@@ -1,0 +1,2 @@
+Error: no se encontró el archivo 'no_existe.log'.
+exit:1

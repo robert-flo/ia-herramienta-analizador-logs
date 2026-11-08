@@ -1,0 +1,18 @@
+Origen: pruebas/con_errores.log
+Líneas en blanco ignoradas: 2
+Eventos totales: 8
+  INFO: 3
+  WARNING: 1
+  ERROR: 1
+Eventos malformados/incompletos: 7
+
+Detalle de malformados (una cuenta por línea, aunque haya varias razones):
+  - línea 1: fecha ausente
+  - línea 2: fecha no es una fecha de calendario real
+  - línea 3: severidad ausente o no reconocida (se exige [INFO], [WARNING] o [ERROR] en mayúsculas exactas)
+  - línea 4: severidad ausente o no reconocida (se exige [INFO], [WARNING] o [ERROR] en mayúsculas exactas)
+  - línea 5: severidad ausente o no reconocida (se exige [INFO], [WARNING] o [ERROR] en mayúsculas exactas)
+  - línea 6: mensaje vacío o ausente
+  - línea 10: fecha con formato incorrecto (se exige YYYY-MM-DD con dígitos ASCII de ancho exacto 4-2-2)
+
+Solapamiento: el total de eventos es el de líneas no vacías. Un evento malformado con severidad reconocida suma en su nivel Y en malformados. Una severidad desconocida no suma en INFO/WARNING/ERROR.

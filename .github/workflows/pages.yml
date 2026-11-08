@@ -21,6 +21,7 @@ jobs:
       - name: Copiar módulo canónico y fixtures
         run: |
           cp analizador.py docs/analizador.py
+          cp RobertoFlores-Tarea03.pdf docs/RobertoFlores-Tarea03.pdf
           mkdir -p docs/ejemplos
           cp pruebas/bien_formado.log pruebas/con_errores.log pruebas/ejemplo_enunciado.log docs/ejemplos/
       - uses: actions/configure-pages@v5

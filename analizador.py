@@ -1,6 +1,7 @@
 """Núcleo puro del analizador de logs.
 
-Autor: Roberto Flores (25ASAB015)
+Autor: Roberto Carlos Flores Quintanilla
+Programa: Kodigo — AI For Devs Jr. 5 (Instructor: Ing. Ronald Mejia)
 Actividad: IA como Herramienta, no como Autor: Desarrollo Guiado y Validado de un Script en Python
 
 Este módulo concentra las reglas de validación y clasificación de eventos.
