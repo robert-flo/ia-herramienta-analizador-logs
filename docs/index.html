@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analizador de Logs en Python — Demo Interactiva</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --ink: #1c1915;
+      --muted: #5c564c;
+      --paper: #fffcf6;
+      --line: #d9d1c3;
+      --accent: #8c2f2f;
+      --ok: #2c5e3f;
+      --warn: #8a5a12;
+      --err: #8c2f2f;
+      --info: #1f4b73;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      background:
+        radial-gradient(1200px 500px at 10% -10%, #efe6d4, transparent),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    header, main, footer {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+    header { padding-top: 2.2rem; }
+    .badge {
+      display: inline-block;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: #e6decb;
+      color: var(--ink);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 0.6rem;
+    }
+    h1 {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      margin: 0 0 0.4rem;
+    }
+    .lede { color: var(--muted); margin: 0 0 1.35rem; max-width: 46rem; }
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1.25rem 1.35rem;
+      box-shadow: 0 10px 30px rgba(28, 25, 21, 0.04);
+      margin-bottom: 1rem;
+    }
+    label.file {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      font-weight: 600;
+    }
+    input[type=file] { font-family: inherit; font-weight: normal; }
+    .demo-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      align-items: center;
+      margin-top: 1rem;
+      padding-top: 0.9rem;
+      border-top: 1px dashed var(--line);
+    }
+    .demo-bar span {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-right: 0.25rem;
+    }
+    button.btn {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    button.btn:hover:not(:disabled) {
+      background: var(--info);
+      color: #fff;
+      border-color: var(--info);
+    }
+    button.btn.primary {
+      background: var(--info);
+      color: #fff;
+      border-color: var(--info);
+    }
+    button.btn.primary:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+    button.btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .status { margin: 0.85rem 0 0; color: var(--muted); font-size: 0.95rem; font-weight: 500; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin: 1.15rem 0;
+    }
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.85rem;
+      background: #fff;
+    }
+    .stat b { display: block; font-size: 1.65rem; }
+    .stat span { color: var(--muted); font-size: 0.85rem; }
+    .stat.info b { color: var(--info); }
+    .stat.warn b { color: var(--warn); }
+    .stat.err b { color: var(--err); }
+    .stat.bad b { color: var(--accent); }
+    pre {
+      white-space: pre-wrap;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.85rem;
+      background: #1c1915;
+      color: #f4f1ea;
+      padding: 1rem;
+      border-radius: 10px;
+      overflow: auto;
+    }
+    textarea#editor-log {
+      width: 100%;
+      min-height: 155px;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.84rem;
+      padding: 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+      resize: vertical;
+      margin-top: 0.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 0.45rem 0.3rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .note {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.9rem;
+      margin-bottom: 0;
+    }
+    footer { padding: 1.5rem 1.25rem 3rem; color: var(--muted); font-size: 0.9rem; }
+    a { color: var(--info); }
+    #resultados.oculto, #detalle.oculto, #panel-editor.oculto { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="badge">Roberto Flores · 25ASAB015 · IA como Herramienta, no como Autor</span>
+    <h1>Analizador de Logs en Python</h1>
+    <p class="lede">
+      Selecciona un archivo <code>.log</code> / <code>.txt</code> desde tu computadora o usa los
+      <strong>botones de prueba rápida</strong> para cargar los casos de demostración.
+      El análisis se ejecuta localmente en el navegador con el mismo módulo Python del CLI
+      (<code>analizador.py</code>) mediante Pyodide.
+    </p>
+  </header>
+  <main>
+    <div class="panel">
+      <label class="file">
+        1. Seleccionar archivo local:
+        <input id="archivo" type="file" accept=".log,.txt,text/plain">
+      </label>
+
+      <div class="demo-bar">
+        <span>2. Pruebas rápidas en 1 clic (Demo):</span>
+        <button type="button" class="btn demo-btn" data-demo="bien_formado.log" disabled>
+          ▶ Probar bien_formado.log
+        </button>
+        <button type="button" class="btn demo-btn" data-demo="con_errores.log" disabled>
+          ▶ Probar con_errores.log
+        </button>
+        <button type="button" class="btn demo-btn" data-demo="ejemplo_enunciado.log" disabled>
+          ▶ Probar ejemplo_enunciado.log
+        </button>
+      </div>
+
+      <p class="status" id="estado">Cargando runtime de Python (Pyodide)…</p>
+      <p class="note">
+        Descargar archivos de prueba para usarlos en local:
+        <a href="ejemplos/bien_formado.log" download>bien_formado.log</a> ·
+        <a href="ejemplos/con_errores.log" download>con_errores.log</a> ·
+        <a href="ejemplos/ejemplo_enunciado.log" download>ejemplo_enunciado.log</a>
+      </p>
+    </div>
+
+    <section id="panel-editor" class="panel oculto">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+        <strong id="titulo-archivo">Contenido del archivo cargado</strong>
+        <button type="button" id="btn-reanalizar" class="btn primary">
+          ⚡ Analizar cambios del texto en vivo
+        </button>
+      </div>
+      <textarea id="editor-log" spellcheck="false" aria-label="Contenido del log"></textarea>
+    </section>
+
+    <section id="resultados" class="oculto">
+      <div class="grid">
+        <div class="stat"><span>Eventos totales</span><b id="n-total">0</b></div>
+        <div class="stat info"><span>INFO</span><b id="n-info">0</b></div>
+        <div class="stat warn"><span>WARNING</span><b id="n-warning">0</b></div>
+        <div class="stat err"><span>ERROR</span><b id="n-error">0</b></div>
+        <div class="stat bad"><span>Malformados</span><b id="n-mal">0</b></div>
+        <div class="stat"><span>Líneas en blanco</span><b id="n-blanco">0</b></div>
+      </div>
+      <pre id="informe"></pre>
+    </section>
+
+    <section id="detalle" class="oculto panel" style="margin-top:1rem;">
+      <h2 style="margin-top:0;font-size:1.1rem;">Detalle de líneas malformadas o incompletas</h2>
+      <table>
+        <thead><tr><th>Línea</th><th>Razones detectadas</th><th>Contenido de la línea</th></tr></thead>
+        <tbody id="tbody-mal"></tbody>
+      </table>
+    </section>
+  </main>
+  <footer>
+    Desarrollado por <strong>Roberto Flores (25ASAB015)</strong> ·
+    Módulo Python compartido: <code>analizador.py</code> ·
+    Ejecución en consola: <code>python3 main.py pruebas/bien_formado.log</code> ·
+    Repositorio: <a href="https://github.com/robert-flo/ia-herramienta-analizador-logs">github.com/robert-flo/ia-herramienta-analizador-logs</a>
+  </footer>
+  <script type="module">
+    const PYODIDE_CDN = "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
+    const estado = document.getElementById("estado");
+    const input = document.getElementById("archivo");
+    const demoBtns = document.querySelectorAll(".demo-btn");
+    const panelEditor = document.getElementById("panel-editor");
+    const editorLog = document.getElementById("editor-log");
+    const tituloArchivo = document.getElementById("titulo-archivo");
+    const btnReanalizar = document.getElementById("btn-reanalizar");
+    let pyodide = null;
+    let nombreActual = "editor_en_vivo.log";
+
+    const EJEMPLOS_FALLBACK = {
+      "bien_formado.log": `[INFO] 2024-01-10 arranque del sistema
+[INFO] 2024-01-10 usuario conectado
+[WARNING] 2024-01-11 disco al 85 por ciento
+[ERROR] 2024-01-12 fallo de autenticacion
+[WARNING] 2024-01-12 reintento de conexion
+[INFO] 2024-01-13 proceso finalizado
+`,
+      "con_errores.log": `[WARNING] Invalid password attempt
+[INFO] 2023-02-29 fallo calendario no bisiesto
+[error] 2024-01-15 severidad en minusculas
+[DEBUG] 2024-01-15 nivel desconocido
+INFO 2024-01-15 sin corchetes
+[ERROR] 2024-01-15
+
+
+[INFO] 2024-03-01 sistema iniciado
+[INFO] 2024-1-02 fecha sin relleno de ceros
+`,
+      "ejemplo_enunciado.log": `[INFO] 2025-01-10 User logged in
+[ERROR] 2025-01-10 Failed to connect to database
+[WARNING] Invalid password attempt
+`
+    };
+
+    async function cargarModulo(py) {
+      const candidatos = ["../analizador.py", "./analizador.py"];
+      let src = null;
+      let ultimo = "";
+      for (const url of candidatos) {
+        try {
+          const r = await fetch(url);
+          ultimo = `${url} → ${r.status}`;
+          if (r.ok) {
+            src = await r.text();
+            break;
+          }
+        } catch (e) {
+          ultimo = `${url} → ${e}`;
+        }
+      }
+      if (!src) {
+        throw new Error("No se pudo cargar analizador.py (" + ultimo + ")");
+      }
+      py.FS.writeFile("analizador.py", src);
+      py.runPython("import importlib, analizador; importlib.reload(analizador)");
+    }
+
+    async function iniciar() {
+      try {
+        const { loadPyodide } = await import(PYODIDE_CDN + "pyodide.mjs");
+        pyodide = await loadPyodide({ indexURL: PYODIDE_CDN });
+        await cargarModulo(pyodide);
+        estado.textContent = "Listo. Selecciona un archivo de log o pulsa un botón de prueba rápida.";
+        input.disabled = false;
+        demoBtns.forEach(b => b.disabled = false);
+      } catch (e) {
+        estado.textContent = "No se pudo iniciar Pyodide: " + e +
+          ". Esta página necesita red al CDN (jsdelivr).";
+      }
+    }
+
+    function pintar(data, nombre, textoOriginal) {
+      nombreActual = nombre;
+      if (typeof textoOriginal === "string") {
+        panelEditor.classList.remove("oculto");
+        tituloArchivo.textContent = `Contenido de: ${nombre} (puedes editar y reanalizar en vivo)`;
+        editorLog.value = textoOriginal;
+      }
+      document.getElementById("resultados").classList.remove("oculto");
+      document.getElementById("n-total").textContent = data.eventos_totales;
+      document.getElementById("n-info").textContent = data.por_nivel.INFO;
+      document.getElementById("n-warning").textContent = data.por_nivel.WARNING;
+      document.getElementById("n-error").textContent = data.por_nivel.ERROR;
+      document.getElementById("n-mal").textContent = data.malformados;
+      document.getElementById("n-blanco").textContent = data.lineas_en_blanco;
+      document.getElementById("informe").textContent =
+        data.informe.replace("(memoria)", nombre);
+      const tbody = document.getElementById("tbody-mal");
+      tbody.replaceChildren();
+      const seccion = document.getElementById("detalle");
+      if (!data.detalle_malformados.length) {
+        seccion.classList.add("oculto");
+        return;
+      }
+      seccion.classList.remove("oculto");
+      for (const item of data.detalle_malformados) {
+        const tr = document.createElement("tr");
+        const a = document.createElement("td"); a.textContent = item.linea;
+        const b = document.createElement("td"); b.textContent = item.razones.join("; ");
+        const c = document.createElement("td"); c.textContent = item.texto;
+        tr.append(a, b, c);
+        tbody.append(tr);
+      }
+    }
+
+    function ejecutarBytes(buf, nombre, textoVista) {
+      pyodide.FS.writeFile("entrada.log", buf);
+      const json = pyodide.runPython(`
+from analizador import analizar_archivo, resultado_a_json
+resultado_a_json(analizar_archivo("entrada.log"))
+`);
+      const data = JSON.parse(json);
+      pintar(data, nombre, textoVista);
+      estado.textContent = `Análisis completado para "${nombre}" (procesado en navegador con Python).`;
+    }
+
+    input.addEventListener("change", async () => {
+      const file = input.files && input.files[0];
+      if (!file || !pyodide) return;
+      estado.textContent = "Analizando en el navegador…";
+      try {
+        const ab = await file.arrayBuffer();
+        const buf = new Uint8Array(ab);
+        const texto = new TextDecoder("utf-8", { fatal: false }).decode(buf);
+        ejecutarBytes(buf, file.name, texto);
+      } catch (e) {
+        estado.textContent = "Error al analizar: " + e;
+      }
+    });
+
+    demoBtns.forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (!pyodide) return;
+        const nombre = btn.dataset.demo;
+        estado.textContent = `Cargando ejemplo ${nombre}…`;
+        let texto = null;
+        for (const ruta of [`./ejemplos/${nombre}`, `../pruebas/${nombre}`]) {
+          try {
+            const r = await fetch(ruta);
+            if (r.ok) {
+              texto = await r.text();
+              break;
+            }
+          } catch (_) {}
+        }
+        if (texto === null) {
+          texto = EJEMPLOS_FALLBACK[nombre] || "";
+        }
+        const buf = new TextEncoder().encode(texto);
+        ejecutarBytes(buf, `pruebas/${nombre}`, texto);
+      });
+    });
+
+    btnReanalizar.addEventListener("click", () => {
+      if (!pyodide) return;
+      const texto = editorLog.value;
+      const buf = new TextEncoder().encode(texto);
+      ejecutarBytes(buf, nombreActual, texto);
+    });
+
+    input.disabled = true;
+    iniciar();
+  </script>
+</body>
+</html>
