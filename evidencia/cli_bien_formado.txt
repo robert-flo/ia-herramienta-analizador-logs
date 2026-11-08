@@ -1,0 +1,9 @@
+Origen: pruebas/bien_formado.log
+Líneas en blanco ignoradas: 0
+Eventos totales: 6
+  INFO: 3
+  WARNING: 2
+  ERROR: 1
+Eventos malformados/incompletos: 0
+
+Solapamiento: el total de eventos es el de líneas no vacías. Un evento malformado con severidad reconocida suma en su nivel Y en malformados. Una severidad desconocida no suma en INFO/WARNING/ERROR.

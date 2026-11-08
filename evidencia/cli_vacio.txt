@@ -1,0 +1,9 @@
+Origen: /tmp/vacio.log
+Líneas en blanco ignoradas: 0
+Eventos totales: 0
+  INFO: 0
+  WARNING: 0
+  ERROR: 0
+Eventos malformados/incompletos: 0
+
+Solapamiento: el total de eventos es el de líneas no vacías. Un evento malformado con severidad reconocida suma en su nivel Y en malformados. Una severidad desconocida no suma en INFO/WARNING/ERROR.

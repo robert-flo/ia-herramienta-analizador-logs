@@ -1,0 +1,9 @@
+URL local: http://127.0.0.1:38641/docs/index.html
+Python: 3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]
+Estado tras carga: Listo. Selecciona un archivo de log.
+bien_formado CLI={'total': '6', 'info': '3', 'warning': '2', 'error': '1', 'mal': '0', 'blanco': '0'}
+bien_formado WEB={'total': '6', 'info': '3', 'warning': '2', 'error': '1', 'mal': '0', 'blanco': '0'}
+captura: evidencia/web_bien_formado.png
+con_errores CLI={'total': '8', 'info': '3', 'warning': '1', 'error': '1', 'mal': '7', 'blanco': '2'}
+con_errores WEB={'total': '8', 'info': '3', 'warning': '1', 'error': '1', 'mal': '7', 'blanco': '2'}
+captura: evidencia/web_con_errores.png

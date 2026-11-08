@@ -1,0 +1,12 @@
+CPython 3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]
+datetime.strptime(valor, "%Y-%m-%d"):
+  ACEPTA '2024-1-2'      -> 2024-01-02
+  ACEPTA '2024-1-02'     -> 2024-01-02
+  ACEPTA '2024-01-2'     -> 2024-01-02
+  ACEPTA '2024-01-02'    -> 2024-01-02
+  ACEPTA '2024-02-29'    -> 2024-02-29
+  RECHAZA '2023-02-29'    -> ValueError: day is out of range for month
+  RECHAZA '2024-13-01'    -> ValueError: time data '2024-13-01' does not match format '%Y-%m-%d'
+  RECHAZA '24-01-02'      -> ValueError: time data '24-01-02' does not match format '%Y-%m-%d'
+
+Conclusión: %Y-%m-%d acepta 2024-1-2. No basta como validador del formato exacto.

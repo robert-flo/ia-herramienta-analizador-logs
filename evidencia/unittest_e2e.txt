@@ -1,0 +1,13 @@
+test_ancho_fecha_sin_ceros_es_malformado (tests.test_e2e.TestFechasCalendarioYAncho.test_ancho_fecha_sin_ceros_es_malformado) ... ok
+test_bisiesto_2024_02_29_valido (tests.test_e2e.TestFechasCalendarioYAncho.test_bisiesto_2024_02_29_valido) ... ok
+test_no_bisiesto_2023_02_29_invalido (tests.test_e2e.TestFechasCalendarioYAncho.test_no_bisiesto_2023_02_29_invalido) ... ok
+test_bien_formado_coincide_con_esperados (tests.test_e2e.TestFixtures.test_bien_formado_coincide_con_esperados) ... ok
+test_con_errores_coincide_con_esperados (tests.test_e2e.TestFixtures.test_con_errores_coincide_con_esperados) ... ok
+test_archivo_inexistente_sin_traceback (tests.test_e2e.TestSeleccionYErroresDeArchivo.test_archivo_inexistente_sin_traceback) ... ok
+test_archivo_vacio (tests.test_e2e.TestSeleccionYErroresDeArchivo.test_archivo_vacio) ... ok
+test_seleccion_interactiva (tests.test_e2e.TestSeleccionYErroresDeArchivo.test_seleccion_interactiva) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.268s
+
+OK
